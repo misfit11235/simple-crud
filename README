@@ -1,0 +1,261 @@
+Simple command-line tool to rewrite PHP <?php open tags into
+long and short forms, adding or removing the closing ?> token,
+probing or removal of trailing whitespace and hidden markers
+(e.g. UTF-8 BOM, or NUL bytes).
+
+A simple invocation that rewrites all *.php scripts in a given
+directory (recursively) is:
+
+    phptags --whitespace --close  ./forum/
+
+Also works on a list of files:
+
+    phptags --warn -v  *.php
+
+
+There are two distinct matching and rewriting modes, the default
+regex matching and traversing scripts per PHP tokenizer. Both
+work for all tasks theoretically.
+
+Whitespace detection and removal is always done using regular
+expressions. For --close and --unclose tasks it is likewise
+reliable.
+
+Rewriting short and long tags should preferrably done with the
+--tokenizer mode, because the regex rewrite is not context-aware
+(can affect open/close tags in strings or comments). Albeit that
+might be desireable in edge cases, and regex usage also retains
+spacing after short tags more prudently.
+
+
+Lastly this tool is Public Domain, compatible to all open
+source and Free software licenses. Thus redistributable with
+applications, scripts and libraries. BUT COMES WITH NO WARRANTY.
+
+
+
+
+
+NAME
+       phptags - Converter for PHP scripts open/close tags
+
+
+SYNOPSIS
+       phptags [ --options,...  ] [ files, path ]
+
+
+DESCRIPTION
+       phptags  is a  simple tool to alternate <?php/?> tags in
+       *.php scripts. It recursively reads through  directories
+       or  a given list of scripts and cleans up <?php open and
+       ?> close token.
+
+       It combines various operation tasks:
+
+         * Remove leading and trailing whitespace.
+         * Convert <? short open tokens into <?php long tags.
+         * Or vice versa, long into short tags (for templates).
+         * Remove or add ?> close tokens.
+
+
+FILES
+       *.php  Glob patterns can be used to specify  a  list  of
+              files  to  process.   (The shell usually does the
+              pattern matching, but unprocessed  *.*   patterns
+              are also accepted.)
+
+       ./directory/
+              Given  directories  are recursively traversed and
+              searched for *.php files; php4,  php5  and  phtml
+              extensions also accepted.
+
+       Both can be combined.
+
+OPTIONS
+       Short  options  cannot  be  concatenated.  They  must be
+       listed individually.
+
+       Whitespace modification
+
+
+       -w, --white, --whitespace
+              Removes leading or trailing whitespace.
+
+       -W, --warn
+              Just prints warnings when it detects  any  white‐
+              space (or leading UTF-8 BOM).
+
+
+       Adding or removing closing tags
+
+
+       -c, --close
+              Appends  closing  ?>  token when absent at end of
+              scripts.
+
+       -u, --unclosed
+              Removes trailing ?> close tag if  present.  (Also
+              gets  removed  if there should be trailing white‐
+              space.)
+
+
+       Rewriting short or long tags
+
+
+       -l, --long
+              Converts short <? tags into long <?php versions.
+
+       -s, --short
+              Converts unneccessary long <?php tags into  short
+              <? or <?= versions. It is not an overly sophisti‐
+              cated match method, but should only convert  one-
+              liners  into short tags. Occurences of <?php echo
+              and <? echo or print become <?=.
+
+       -a, --all, --shortall
+              Converts all long <?php tags into short  <?  ver‐
+              sions. This is intended for template scripts. You
+              will need the --shortall  option  in  --tokenizer
+              mode  most of the time, because it cannot differ‐
+              entiate between one-liners and code blocks.
+
+
+       Behaviour flags
+
+
+       --php54
+              Does not rewrite <?= into  long  tags  in  --long
+              mode,  as  those are always enabled for newer PHP
+              version 5.4 and later. (Not default, because  5.4
+              still isn't widespread.)
+
+       --rx, --regex
+              Prefer  regex for rewriting short/long tags. This
+              is the default.  Can be ambiguous due to presence
+              of tags within PHP string context or comments.
+
+       -t, --token, --tokenizer
+              Use  tokenizer  for  rewriting  short/long  tags.
+              (More  reliable,  but  may  not  work  when   the
+              short_open_tag  php.ini  setting hampers the tok‐
+              enizer behaviour. It's also less  judicious  with
+              linebreaks  after  opening  tags  than  the regex
+              mode, and doesn't honor <?php print  variants  as
+              echo equivalent for <?= short conversion.)
+
+
+       Miscellaneous options
+
+
+       -h, --help
+              Prints help text.
+
+       -V, --version
+              Prints phptags version.
+
+       -v, --verbose
+              More output.
+
+       -D, --debug
+              Debugging messages.
+
+       -q, --quiet
+              Does  not  print additional match infos in white‐
+              space --warn mode, but just detected files.
+
+       --new, --suffix
+              Does not overwrite processed *.php  scripts,  but
+              saves changes into *.php.new filenames.
+
+       -b, --backup
+              Renames  old  files  to filename.php~ prior over‐
+              writing.  This won't save multiple old  versions.
+              Just the last gets copied.
+
+       -d, --dry
+              Dry run. Does not save modified files back.
+
+       -c, --color
+              Colorizes  the  --warn output on Windows. This is
+              enabled on BSD/Linux per  default;  the  -c  flag
+              instead disables it there.
+
+
+
+EXAMPLES
+       phptags  --close  *.php
+              Adds  closing  tag  to any missing *.php files in
+              current directory.
+
+       phptags  --warn  scripts/
+              Traverses given directory and warns  of  trailing
+              or leading whitespace.
+
+       phptags  -w -s -c  index*.php  ./templates
+              Fixes  whitespace,  converts into short tags, and
+              adds closing tag. Works on some index  files  and
+              all php scripts in given templates directory.
+
+
+FILES
+       /home/$USER/.config/php/phptags.php   An   ordinary  php
+       script, that could contain operation parameter defaults.
+
+              <?php
+                 return array(
+                     'token' => 1, 'verbose' => 1 , 'white'  =>
+              1,
+                 );
+
+       Internal  flag names mostly match the long CLI parameter
+       names.
+
+
+ENVIRONMENT
+       XDG_CONFIG_HOME (on BSD/Linux), APPDATA (on Windows)
+              Configuration store directory instead of  default
+              ~/.config/
+
+       PHPTAGS_CONFIG
+              Override to temporarily disable the configuration
+              file.
+              For example PHPTAGS_CONFIG=. phptags -v will  run
+              without reading the presets.
+
+
+CAVEATS
+       ASP  style <% tags and PHPs super long <script> tags are
+       never rewritten.  (The regex mode doesn't look for them,
+       and the tokenizer should leave them alone.)
+
+       Single  newlines  after the closing ?> php token are not
+       an actual problem for PHP. The parser/tokenizer  eats  a
+       single  <NL> or <CR> or <CRLF> up. It's only when people
+       manage to append multiple of them, or intersparsed  with
+       spaces and tabs, that it can accrue as premature output.
+
+
+BUGS
+       Matching for <?php tags is case-sensitive. That's incor‐
+       rect. PHP tags are case-insensitive.  (Like  most  other
+       identifiers  in  PHP, unless you use e.g.  an autoloader
+       with systemic misdesigns.)
+
+       As mentioned before, the --regex mode  is  not  context-
+       aware  (for  --long  and  --short modes), thus can erro‐
+       neously match and rewrite <? tags in PHP string  context
+       or comments:
+
+              print 'Here <?php and ?> will get mangled.';
+              becomes
+              print 'Here <? and ?> will get mangled.';
+
+       Might  be  wanted in rare cases. But use the --tokenizer
+       mode otherwise for maximum resiliency.
+
+
+SEE ALSO
+       php(1) recode(1) fromdos(1)
+
+
+

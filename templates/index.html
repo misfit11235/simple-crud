@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h1 class='text-center'><a href="index.php">PHP C.R.U.D.</a></h1>
+    <div class='container-fluid'>
+        <div class='row d-flex justify-content-center'>
+            <div class='col-md-12 col-sm-12 d-flex justify-content-center mb-3'>
+                    <form method="post">
+                        <div class='form-group justify-content-center'>
+                            Username: <input type="text" name="username" class='userInput' required>
+                            Password: <input type="password" name="password" class='userInput' required>
+                            Email: <input type="email" name="email" class='userInput' required>
+                            <div class='d-flex justify-content-center'><button type="submit" name="create" class='btn btn-success btn-round mt-2'>Create</button></div>   
+                        </div>
+                    </form>
+            </div>
+        </div>
+        <div class='row'>    
+            <div class='col-md-12 col-sm-12 d-flex justify-content-center'>    
+                <ul class='list-group list-group-flush w-100 px-5'>
+                    <li class='row mb-3'>
+                        <div class='col-md-3 col-sm-12 text-center d-none d-md-block d-lg-block'>Name</div> 
+                        <div class='col-md-3 col-sm-12 text-center d-none d-md-block d-lg-block'>Password</div> 
+                        <div class='col-md-3 col-sm-12 text-center d-none d-md-block d-lg-block'>Email</div> 
+                    </li>
+
+                    {% for user in users %}
+                    <li class='row justify-content-center my-1' style='border-top:1px solid black'>
+                        <div class='col-md-3 col-sm-12 d-flex justify-content-center'>
+                            <span class='d-block d-sm-block d-md-none d-lg-none text-center mr-1'>Name:</span> {{user.name}}
+                        </div> 
+                        <div class='col-md-3 col-sm-12 d-flex justify-content-center'> 
+                            <span class='d-block d-sm-block d-md-none d-lg-none text-center mr-1'>Password:</span> {{user.password}} 
+                        </div> 
+                        <div class='col-md-3 col-sm-12 d-flex justify-content-center'> 
+                            <span class='d-block d-sm-block d-md-none d-lg-none text-center mr-1'>Email:</span> {{user.email}} 
+                        </div>
+                        <div class='col-md-3 col-sm-12 d-flex justify-content-center no-padding'> 
+                            <a class='btn btn-sm btn-primary href-stack'  href='manage_user.php?targetId={{user.id}}'>Manage user</a> 
+                        </div>
+                    </li>
+                    {% endfor %}
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

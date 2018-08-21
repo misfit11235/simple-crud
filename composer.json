@@ -1,0 +1,8 @@
+{
+    "require": {
+        "symfony/dotenv": "^3.4",
+        "twig/twig": "^2.0",
+        "twig/extensions": "^1.5",
+        "symfony/translation": "^3.4"
+    }
+}

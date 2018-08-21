@@ -1,0 +1,44 @@
+body {
+    width: 100%;
+    height: 100vh;
+   /*  background-image: url('http://pluspng.com/img-png/waves-png-hd-colorful-smooth-abstract-waves-motion-graphic-design-video-animation-ultra-hd-4k-3840x2160-motion-background-videoblocks-1920.png'); */
+    background-color:rgba(230, 230, 230, 0.671);
+   /* color: #6C7A89; */
+    font-family: 'Oxygen', sans-serif !important;
+    
+}
+
+h2, h3 {
+    color: #6C7A89;
+}
+
+input[type=submit] {
+    border-radius: 15px;
+}
+
+.btn-round {
+    border-radius: 15px ;
+}
+
+.userInput {
+    display: block;
+}
+
+.is-marginless{
+    margin: 0 !important;
+}
+
+.no-padding{
+    padding: 1px;
+}
+
+.href-stack {
+   /*  display: inline-block; */
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.custom-size {
+    width: 40%;
+}
+
